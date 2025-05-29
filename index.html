@@ -1,0 +1,208 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <base target="_blank">
+  <meta charset="UTF-8">
+  <title>상단고정 검색엔진 + 고정 네비 + 풀화면 1~7 + 갤러리1~4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {margin:0; padding:0; background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif;}
+    /* 🔥 헤더(검색바+네비) 통합 고정 */
+    .header-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #fff;
+      box-shadow: 0 2px 14px 0 rgba(30,32,80,0.06);
+    }
+    .search-bar-fixed {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 0 10px 0;
+      background: #fff;
+      box-sizing: border-box;
+    }
+    .search-bar-center {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 8px;
+    }
+    .snark-form-row {display:flex;align-items:center;width:100%;gap:0;}
+    .search-container {display:flex;flex:1 1 400px;min-width:120px;max-width:100%;background:#fff;border:2.5px solid #3C3C8C;border-right:none;border-radius:36px 0 0 36px;height:48px;overflow:hidden;box-sizing:border-box;}
+    .search-select {border:none;background:transparent;font-size:1rem;color:#222;padding:0 10px 0 12px;min-width:100px;max-width:180px;outline:none;appearance:none;height:100%;flex-shrink:0;cursor:pointer;}
+    .search-input {flex:1;border:none;background:transparent;font-size:1rem;color:#333;padding:0 10px;outline:none;height:100%;font-family:inherit;box-sizing:border-box;}
+    .search-btn {border:2.5px solid #3C3C8C;border-left:none;border-radius:0 36px 36px 0;background:#3C3C8C;color:#fff;font-size:1rem;font-weight:bold;cursor:pointer;height:48px;min-width:90px;padding:0 14px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+    .search-btn:hover {background:#232356;}
+    /* ✅ 네비게이션도 항상 검색바 바로 아래 */
+    .screen-nav {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 10px;
+      margin: 0 auto;
+      padding: 0 4px 10px 4px;
+      background: #fff;
+      border-bottom: 1px solid #ececff;
+      box-sizing: border-box;
+    }
+    .screen-btn {background:none;color:#232356;border:none;border-radius:0;padding:0 7px;font-size:0.98rem;font-weight:bold;margin:0;cursor:pointer;box-shadow:none;transition:color 0.18s;min-width:0;min-height:0;line-height:1.5;outline:none;text-align:center;}
+    .screen-btn.active, .screen-btn:hover {color:#05113f;background:none;box-shadow:none;text-decoration:underline;}
+    @media (max-width: 600px) {.screen-nav { gap:4px; padding:0 1vw 8px 1vw;} .screen-btn {font-size:0.9rem; padding:0 3px;}}
+    @media (max-width: 420px) {.screen-nav { gap:2px; } .screen-btn {font-size:0.8rem; padding:0 1px;}}
+
+    /* 본문(컨텐츠) */
+    .screen-content {max-width:1200px;width:100%;margin:22px auto 44px auto;padding:28px 3vw 38px 3vw;min-height:220px;background:#fff;border-radius:0;box-shadow:none;font-size:1.13rem;color:#232356;text-align:left;transition:background 0.18s;box-sizing:border-box;}
+    .screen-block {display:none;width:100%;max-width:100vw;min-height:160px;}
+    .screen-block.active {display:block;}
+    .screen-section-label {margin:24px 0 10px 0;padding:0;font-size:1.15rem;color:#232356;font-weight:bold;border:none;background:none;text-align:center;width:100%;}
+    /* ==== 카드 스타일 ==== */
+    .img-grid {display:grid;grid-template-columns:repeat(6, 1fr);gap:28px 12px;max-width:1050px;margin:40px auto 30px auto;padding:0 6px;background:#fff;}
+    .img-cell {background:#fff;border-radius:0;display:flex;flex-direction:column;align-items:center;padding:0;box-shadow:none;}
+    .img-frame {width:150px;height:97px;background:#fff;display:flex;align-items:center;justify-content:center;border-radius:0;overflow:hidden;border:none;box-sizing:border-box;margin-bottom:0;}
+    .img-frame img {width:98%;height:98%;object-fit:cover;display:block;margin:auto;background:#fff;}
+    /* -- 갤러리4(매거진)만 다르게 -- */
+    #gallery4 .img-frame {width:120px;height:170px;}
+    #gallery4 .img-frame img {width:98%;height:98%;object-fit:cover;}
+    .shadow-line {width:90%;height:12px;margin:0 0 6px 0;display:block;border-radius:0;opacity:0.55;pointer-events:none;user-select:none;}
+    @media (max-width:900px){.img-grid{grid-template-columns:repeat(3,1fr);} .img-frame{width:110px;height:70px;} #gallery4 .img-frame{width:80px;height:120px;}}
+    @media (max-width:600px){.img-grid{grid-template-columns:repeat(2,1fr);} .img-frame{width:90px;height:56px;} #gallery4 .img-frame{width:56px;height:80px;} .shadow-line{height:6px;}}
+  </style>
+</head>
+<body>
+  <!-- 🔥 상단(검색+네비) sticky 고정 헤더 시작 -->
+  <div class="header-wrap">
+    <div class="search-bar-fixed">
+      <div class="search-bar-center">
+        <form id="snarkForm" onsubmit="HandleForm(this); return false;" class="snark-form-row" autocomplete="off">
+          <div class="search-container">
+            <select name="service" class="search-select" title="검색엔진 선택">
+              <option disabled selected>검색엔진 선택 ▼</option>
+              <option>통합검색-네이버</option>
+              <option>통합검색-Google</option>
+              <option>만화검색-skytoon1</option>
+            </select>
+            <input size="44" name="query" class="search-input" placeholder="검색어를 입력하세요">
+          </div>
+          <input type="submit" value="검색" class="search-btn">
+        </form>
+      </div>
+    </div>
+    <div class="screen-nav" id="screenNav">
+      <button class="screen-btn active" onclick="showScreen(1);">화면 1</button>
+      <button class="screen-btn" onclick="showScreen(2);">화면 2</button>
+      <button class="screen-btn" onclick="showScreen(3);">화면 3</button>
+      <button class="screen-btn" onclick="showScreen(4);">화면 4</button>
+      <button class="screen-btn" onclick="showScreen(5);">화면 5</button>
+      <button class="screen-btn" onclick="showScreen(6);">화면 6</button>
+      <button class="screen-btn" onclick="showScreen(7);">화면 7</button>
+    </div>
+  </div>
+  <!-- 🔥 본문 컨텐츠 -->
+  <div class="screen-content">
+    <!-- ========== 화면 1 ========== -->
+    <div id="screen-block-1" class="screen-block active">
+      <div class="screen-section-label">갤러리 1</div>
+      <div class="img-grid" id="gallery1"></div>
+      <div class="screen-section-label">갤러리 2</div>
+      <div class="img-grid" id="gallery2"></div>
+      <div class="screen-section-label">갤러리 3</div>
+      <div class="img-grid" id="gallery3"></div>
+      <div class="screen-section-label">갤러리 4 (매거진)</div>
+      <div class="img-grid" id="gallery4"></div>
+    </div>
+    <!-- ========== 화면 2~7 예시 ========== -->
+    <div id="screen-block-2" class="screen-block">
+      <h2>여기에 화면 2의 HTML 코드를 넣으세요</h2>
+      <ul><li>리스트 예시 1</li><li>리스트 예시 2</li></ul>
+    </div>
+    <div id="screen-block-3" class="screen-block">
+      <h2>여기에 화면 3의 HTML 코드를 넣으세요</h2>
+      <img src="https://via.placeholder.com/240x120" alt="샘플이미지">
+    </div>
+    <div id="screen-block-4" class="screen-block">
+      <h2>여기에 화면 4의 HTML 코드를 넣으세요</h2>
+      <iframe width="340" height="192" src="https://www.youtube.com/embed/O5H5KQGuQAs" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div id="screen-block-5" class="screen-block">
+      <h2>여기에 화면 5의 HTML 코드를 넣으세요</h2>
+      <form onsubmit="alert('폼 제출!'); return false;">
+        <input type="text" placeholder="여기에 입력">
+        <input type="submit" value="제출">
+      </form>
+    </div>
+    <div id="screen-block-6" class="screen-block">
+      <h2>여기에 화면 6의 HTML 코드를 넣으세요</h2>
+      <a href="https://naver.com" target="_blank">네이버 바로가기</a>
+    </div>
+    <div id="screen-block-7" class="screen-block">
+      <h2>여기에 화면 7의 HTML 코드를 넣으세요</h2>
+      <div style="background:linear-gradient(90deg,#ff9,#99f);padding:10px;">색 배경 예시</div>
+    </div>
+  </div>
+  <script>
+    // 검색엔진 로직(건드리지 않음)
+    var snarkEngines = [
+      { name: "통합검색-네이버", home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { name: "통합검색-Google", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { name: "만화검색-skytoon1", home: "https://www.skytoon1.com/webtoon/index/11", search: "https://www.skytoon1.com/search?skeyword=" }
+    ];
+    function HandleForm(form) {
+      var idx = form.service.selectedIndex - 1;
+      if (idx < 0) { alert("검색엔진을 선택하세요."); return false; }
+      var q = form.query.value.trim();
+      var eng = snarkEngines[idx];
+      var url = q ? (eng.search + encodeURIComponent(q)) : eng.home;
+      window.open(url, '_blank');
+    }
+    function showScreen(idx) {
+      var btns = document.querySelectorAll('.screen-btn');
+      btns.forEach((btn, i) => {
+        if (i === idx - 1) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+      for (let i = 1; i <= 7; i++) {
+        document.getElementById('screen-block-' + i).classList.remove('active');
+      }
+      document.getElementById('screen-block-' + idx).classList.add('active');
+    }
+    // -------- 갤러리 예시 데이터 --------
+    var shadowSrc = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    var items1 = [
+      { url: "https://naver.com", img: "https://i.namu.wiki/i/1O8gFnqPu8Qe37c5EwI7uzq0H5EsZN38Xgwdyz1e1CvQl8EqqUJqfihKv5OS_gbI5xkI1dKZ3LJ9vA-wg0gWgg.svg" },
+      { url: "https://daum.net", img: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Daum_logo.svg" }
+    ];
+    var items2 = [
+      { url: "https://google.com", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" }
+    ];
+    var items3 = [
+      { url: "https://bing.com", img: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Microsoft_Bing_logo.svg" }
+    ];
+    var items4 = [
+      { url: "https://magazine.com", img: "https://cdn.pixabay.com/photo/2017/01/06/19/15/magazine-1953537_1280.jpg" }
+    ];
+    function fillGallery(gridId, items) {
+      var grid = document.getElementById(gridId);
+      grid.innerHTML = items.map(item =>
+        `<div class="img-cell">
+          <a href="${item.url}" target="_blank" class="img-frame">
+            <img src="${item.img}" alt="">
+          </a>
+          <img class="shadow-line" src="${shadowSrc}" alt="">
+        </div>`
+      ).join('');
+    }
+    fillGallery("gallery1", items1);
+    fillGallery("gallery2", items2);
+    fillGallery("gallery3", items3);
+    fillGallery("gallery4", items4);
+  </script>
+</body>
+</html>
