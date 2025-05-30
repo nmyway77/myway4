@@ -45,7 +45,57 @@
             <select name="service" class="search-select" title="검색엔진 선택">
               <option>통합검색-네이버▼</option>
               <option>통합검색-Google</option>
-              <option>만화검색-skytoon1</option>
+              <option>동영상검색-Youtube</option>
+            <option>통합검색-다음</option>
+            <option>통합검색-duckduckgo</option>
+            <option>통합검색-msn</option>
+            <option>통합검색-yahoo</option>
+            <option>통합검색-yandex</option>
+            <option>소프트웨어- 윈도우 </option>
+            <option>쇼핑검색- 네이버 </option>
+            <option>중고검색- 중고나라 </option>
+            <option>중고검색- 네이버카페 </option>
+            <option>중고검색- 당근마켓 </option>
+            <option>쇼핑검색- 다나와</option>
+            <option>쇼핑검색- 쿠팡 </option>
+            <option>쇼핑검색-알리(한글,영어)</option>
+            <option>쇼핑검색-아마존(한글,영어)</option>
+            <option>쇼핑검색-이베이(한글,영어)</option>
+            <option>영어사전-정의</option>
+            <option>영어사전-반의어</option>
+            <option>영문법검사기</option>
+            <option>영문법검사기2</option>
+            <option>영어사전-유의어</option>
+            <option>영어사전-어원</option>
+            <option>번역기-영어한글입력</option>
+            <option>사이트번역-주소입력</option>
+            <option>영어이름변경</option>
+            <option>우편번호검색</option>
+            <option>드라마검색-마루TV</option>
+            <option>전화번호검색-114</option>
+            <option>한자검색-네이버 </option>
+            <option>동영상검색-afreecatv</option>
+            <option>동영상검색-TVCAST</option>
+            <option>동영상검색-KAKAOTV</option>
+            <option>동영상검색-Vimeo</option>
+            <option>통합검색-MS-EDGEstore</option>
+            <option>통합검색-크롬웹스토어</option>
+            <option>통합검색-네이버자료실</option>
+            <option>서적검색-교보문고</option>
+            <option>서적검색-알라딘</option>
+            <option>통합검색-Yahoo</option>
+            <option>SNS검색-Twitter</option>
+            <option>SNS검색-instagram</option>
+            <option>SNS검색-kakao.com</option>
+            <option>SNS검색-Tumblr</option>
+            <option>SNS검색-tiktok</option>
+            <option>SNS검색-Pinterest </option>
+            <option>음악검색-네이버</option>
+            <option>음악검색-멜론</option>
+            <option>음악검색-벅스</option>
+            <option>음악검색-Sonshub</option>
+            <option>만화검색-stoon1</option>
+            <option>만화검색-skytoon1</option>
             </select>
             <input size="44" name="query" class="search-input" placeholder="검색어를 입력하세요">
           </div>
@@ -106,6 +156,56 @@
     var snarkEngines = [
       { name: "통합검색-네이버▼", home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
       { name: "통합검색-Google", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+        { name: "동영상검색-Youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
+      { name: "통합검색-다음", home: "https://www.daum.net/", search: "https://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=" },
+      { name: "통합검색-duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
+      { name: "통합검색-msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
+      { name: "통합검색-yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
+      { name: "통합검색-yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
+      { name: "소프트웨어- 윈도우 ", home: "https://www.uptodown.com", search: "https://kr.uptodown.com/windows/search/" },
+      { name: "쇼핑검색- 네이버 ", home: "https://shopping.naver.com/", search: "https://shopping.naver.com/search/all_search.nhn?where=all&frm=NVSCTAB&query=" },
+      { name: "중고검색- 중고나라 ", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
+      { name: "중고검색- 네이버카페 ", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
+      { name: "중고검색- 당근마켓 ", home: "https://www.daangn.com", search: "https://www.daangn.com/search/" },
+      { name: "쇼핑검색- 다나와", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
+      { name: "쇼핑검색- 쿠팡 ", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
+      { name: "쇼핑검색-알리(한글,영어)", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-" },
+      { name: "쇼핑검색-아마존(한글,영어)", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
+      { name: "쇼핑검색-이베이(한글,영어)", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
+      { name: "영어사전-정의", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=Define+" },
+      { name: "영어사전-반의어", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { name: "영문법검사기", home: "https://virtualwritingtutor.com/", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { name: "영문법검사기2", home: "https://www.gingersoftware.com/grammarcheck/", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { name: "영어사전-유의어", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { name: "영어사전-어원", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { name: "번역기-영어한글입력", home: "https://translate.google.co.uk/", search: "https://translate.google.co.uk/?sl=ko&tl=en&text=" },
+      { name: "사이트번역-주소입력", home: "https://papago.naver.net", search: "https://papago.naver.net/website?locale=ko&source=en&target=ko&url=" },
+      { name: "영어이름변경", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
+      { name: "우편번호검색", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
+      { name: "드라마검색-마루TV", home: "https://marutv.io", search: "https://marutv.io//search.html?keyword=" },
+      { name: "전화번호검색-114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
+      { name: "한자검색-네이버 ", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
+      { name: "동영상검색-afreecatv", home: "https://www.afreecatv.com/", search: "https://www.afreecatv.com/total_search.html?szKeyword=" },
+      { name: "동영상검색-TVCAST", home: "https://tvcast.naver.com/", search: "https://tv.naver.com/search?query=" },
+      { name: "동영상검색-KAKAOTV", home: "https://tv.kakao.com/", search: "https://tv.kakao.com/search?q=" },
+      { name: "동영상검색-Vimeo", home: "https://www.vimeo.com", search: "https://vimeo.com/search?q=" },
+      { name: "통합검색-MS-EDGEstore", home: "https://microsoftedge.microsoft.com", search: "https://microsoftedge.microsoft.com/addons/search/" },
+      { name: "통합검색-크롬웹스토어", home: "https://chrome.google.com/webstore/category/extensions?hl=ko", search: "https://chrome.google.com/webstore/search/" },
+      { name: "통합검색-네이버자료실", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
+      { name: "서적검색-교보문고", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
+      { name: "서적검색-알라딘", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
+      { name: "통합검색-Yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search;_ylt=Ar5458YY5y_GWWeBR2VSqUubvZx4?p=" },
+      { name: "SNS검색-Twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
+      { name: "SNS검색-instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
+      { name: "SNS검색-kakao.com", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
+      { name: "SNS검색-Tumblr", home: "https://www.tumblr.com", search: "https://www.tumblr.com/search/" },
+      { name: "SNS검색-tiktok", home: "https://www.tiktok.com", search: "https://www.tiktok.com/search?q=" },
+      { name: "SNS검색-Pinterest ", home: "https://pinterest.com", search: "https://pinterest.com/search/?q=" },
+      { name: "음악검색-네이버", home: "https://music.naver.com", search: "https://music.naver.com/search/search.nhn?query=" },
+      { name: "음악검색-멜론", home: "https://www.melon.com", search: "https://www.melon.com/search/total/index.htm?q=" },
+      { name: "음악검색-벅스", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" },
+      { name: "음악검색-Sonshub", home: "https://sonshub.co", search: "https://sonshub.co/?s=" },
+      { name: "만화검색-stoon1", home: "https://stoon1.com/webtoon/index/11", search: "https://stoon1.com/search?skeyword=" },
       { name: "만화검색-skytoon1", home: "https://www.skytoon1.com/webtoon/index/11", search: "https://www.skytoon1.com/search?skeyword=" }
     ];
     function HandleForm(form) {
