@@ -113,8 +113,10 @@
       <button class="screen-btn" onclick="showScreen(7);">화면 7</button>
     </div>
   </div>
+
+ 
   <div class="screen-content">
-    <div id="screen-block-1" class="screen-block active">
+      <div id="screen-block-1" class="screen-block active">
       <div class="screen-section-label">갤러리 1</div>
       <div class="img-grid" id="gallery1"></div>
       <div class="screen-section-label">갤러리 2</div>
@@ -124,14 +126,341 @@
       <div class="screen-section-label">갤러리 4 (매거진)</div>
       <div class="img-grid" id="gallery4"></div>
     </div>
+
+   
     <div id="screen-block-2" class="screen-block">
-      <h2>여기에 화면 2의 HTML 코드를 넣으세요</h2>
+      <h2></h2>
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {margin:0; padding:0; background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif;}
+    #controls { position: fixed; top: 20px; right: 10px; display: flex; gap: 8px; z-index: 100;}
+    #controls button { padding: 6px 10px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;}
+    #controls button:nth-child(2) { background: #007bff; }
+    #controls button:nth-child(3) { background: #ffc107; color: #000; }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200;}
+    #modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
+    #modal h3 { margin-bottom: 10px; font-size: 18px; }
+    #modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+    .auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
+    .actions { text-align: right; }
+    .actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
+    .save-btn { background: #28a745; color: #fff; }
+    .cancel-btn { background: #dc3545; color: #fff; }
+    #media-grid { column-count: 5; column-gap: 10px; margin: 20px auto 20px; width: 100%; margin-top: 10px;}
+    .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative;}
+    .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
+    .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+    #html-editor, #html-preview { border-color: white;}
+    #html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; position: relative; top: 20px;}
+    #html-editor { display: none; width: 100%; height: 300px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff;}
+    #html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
+    .editor-space { height: 80px;}
+  </style>
+
+  <div id="controls">
+    <button id="save-media-btn">미디어 저장</button>
+    <button id="export-btn">내보내기</button>
+    <button id="import-btn">가져오기</button>
+    <input type="file" id="import-file" accept="application/json" style="display:none">
+  </div>
+  <div id="media-grid"></div>
+  <div class="editor-space"></div>
+  <button id="html-edit-btn">편집</button>
+  <textarea id="html-editor" placeholder="HTML 코드 편집"></textarea>
+  <div id="html-preview"></div>
+  <div id="modal-overlay">
+    <div id="modal">
+      <h3>미디어 저장</h3>
+      <input type="text" id="img-url" placeholder="사진 URL 입력" autofocus>
+      <button type="button" class="auto-thumb-btn" id="auto-thumb-btn">썸네일 자동찾기</button>
+      <input type="text" id="link-url" placeholder="연결 링크 입력">
+      <div class="actions">
+        <button class="cancel-btn">취소</button>
+        <button class="save-btn">저장</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 썸네일 자동추출 함수
+    function extractYouTubeId(url) {
+      const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/;
+      const match = url.match(regex);
+      return match ? match[1] : null;
+    }
+
+    // 변수 선언
+    const saveBtn = document.getElementById('save-media-btn'),
+      exportBtn = document.getElementById('export-btn'),
+      importBtn = document.getElementById('import-btn'),
+      importFile = document.getElementById('import-file'),
+      overlay = document.getElementById('modal-overlay'),
+      cancelBtn = document.querySelector('.cancel-btn'),
+      confirmBtn = document.querySelector('.save-btn'),
+      imgInput = document.getElementById('img-url'),
+      linkInput = document.getElementById('link-url'),
+      gridContainer = document.getElementById('media-grid'),
+      autoThumbBtn = document.getElementById('auto-thumb-btn');
+    let editingIndex = null;
+
+    saveBtn.onclick = () => openModal();
+    function openModal(item, idx) {
+      if (item) {
+        imgInput.value = item.imgUrl;
+        linkInput.value = item.linkUrl;
+        confirmBtn.textContent = '수정';
+        editingIndex = idx;
+      } else {
+        imgInput.value = '';
+        linkInput.value = '';
+        confirmBtn.textContent = '저장';
+        editingIndex = null;
+      }
+      overlay.style.display = 'flex';
+      imgInput.focus();
+    }
+    cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
+
+    autoThumbBtn.onclick = function() {
+      const linkVal = linkInput.value.trim() || imgInput.value.trim();
+      const youtubeId = extractYouTubeId(linkVal);
+      if (youtubeId) {
+        imgInput.value = `https://img.youtube.com/vi/${youtubeId}/0.jpg`;
+        alert('유튜브 썸네일이 자동으로 입력되었습니다!');
+      } else {
+        alert('유튜브 영상 링크를 입력해 주세요.');
+      }
+    };
+
+    confirmBtn.onclick = () => {
+      const iurl = imgInput.value.trim();
+      if (!iurl) { alert('사진 URL을 입력해주세요.'); imgInput.focus(); return; }
+      let lurl = linkInput.value.trim();
+      if (!lurl) { alert('연결 링크를 입력해주세요.'); linkInput.focus(); return; }
+      if (!/^https?:\/\//i.test(lurl)) lurl = 'https://' + lurl;
+      const list = JSON.parse(localStorage.getItem('mediaList') || '[]');
+      if (editingIndex !== null) list[editingIndex] = { imgUrl: iurl, linkUrl: lurl };
+      else list.push({ imgUrl: iurl, linkUrl: lurl });
+      localStorage.setItem('mediaList', JSON.stringify(list));
+      overlay.style.display = 'none';
+      renderGrid();
+      editingIndex = null;
+    };
+
+    exportBtn.onclick = () => {
+      const mediaList = JSON.parse(localStorage.getItem('mediaList') || '[]');
+      const gridContent = gridContainer.innerHTML;
+      const htmlContent = htmlPreview.innerHTML;
+      const data = {
+        mediaList: mediaList,
+        gridContent: gridContent,
+        htmlContent: htmlContent
+      };
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mediaList_and_html.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    importBtn.onclick = () => importFile.click();
+    importFile.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data.mediaList)) {
+            localStorage.setItem('mediaList', JSON.stringify(data.mediaList));
+            renderGrid();
+          }
+          if (data.htmlContent) {
+            htmlPreview.innerHTML = data.htmlContent;
+            htmlEditor.value = data.htmlContent;
+            // 추가: 가져오기(import) 한 html도 localStorage에 저장!
+            localStorage.setItem('mediaHtmlContent', data.htmlContent);
+          }
+          alert('데이터가 복원되었습니다.');
+        } catch {
+          alert('파일 읽기 중 오류가 발생했습니다.');
+        }
+      };
+      reader.readAsText(file);
+      importFile.value = null;
+    };
+
+    function renderGrid() {
+      const list = JSON.parse(localStorage.getItem('mediaList') || '[]');
+      gridContainer.innerHTML = '';
+      list.slice(0, 500).forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'grid-item';
+        const img = document.createElement('img');
+        img.src = item.imgUrl;
+        img.alt = '';
+        img.addEventListener('click', () => window.open(item.linkUrl, '_blank'));
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = '수정';
+        editBtn.addEventListener('click', e => { e.stopPropagation(); openModal(item, idx); });
+        card.append(img, editBtn);
+        gridContainer.append(card);
+      });
+    }
+
+    // HTML 편집기 로직 (여기서 편집 마침 시 htmlPreview 내용을 localStorage에 저장!)
+    const htmlEditBtn = document.getElementById('html-edit-btn');
+    const htmlEditor = document.getElementById('html-editor');
+    const htmlPreview = document.getElementById('html-preview');
+    let htmlEditing = false;
+
+    htmlEditBtn.onclick = () => {
+      htmlEditing = !htmlEditing;
+      if (htmlEditing) {
+        htmlEditor.style.display = 'block';
+        htmlPreview.style.display = 'none';
+        htmlEditBtn.textContent = '마침';
+        htmlEditor.value = htmlPreview.innerHTML;
+      } else {
+        htmlPreview.innerHTML = htmlEditor.value;
+        htmlEditor.style.display = 'none';
+        htmlPreview.style.display = 'block';
+        htmlEditBtn.textContent = '편집';
+        // 추가: 편집이 끝난 HTML도 localStorage에 저장!
+        localStorage.setItem('mediaHtmlContent', htmlPreview.innerHTML);
+      }
+    };
+
+    // 페이지 로드 시 localStorage에서 htmlContent를 불러오기!
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGrid();
+      const savedHtml = localStorage.getItem('mediaHtmlContent');
+      if (savedHtml) {
+        htmlPreview.innerHTML = savedHtml;
+        htmlEditor.value = savedHtml;
+      }
+    });
+  </script>
+     
       <ul><li>리스트 예시 1</li><li>리스트 예시 2</li></ul>
     </div>
+
+
+
+
+
+
+
+
+   
     <div id="screen-block-3" class="screen-block">
+
+      <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background: #f9fafe;
+      margin: 0;
+      padding: 0;
+    }
+    #media-grid {
+      column-count: 5;
+      column-gap: 10px;
+      margin: 40px auto 20px;
+      width: 100%;
+      max-width: 1400px;
+      min-height: 400px;
+    }
+    .grid-item {
+      break-inside: avoid;
+      margin-bottom: 10px;
+      position: relative;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .grid-item a {
+      display: block;
+      text-decoration: none;
+    }
+    .grid-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .grid-item img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .edit-btn {
+      display: none !important; /* 무조건 숨김 */
+    }
+    @media (max-width: 1200px) {
+      #media-grid { column-count: 3; }
+    }
+    @media (max-width: 700px) {
+      #media-grid { column-count: 2; }
+    }
+    @media (max-width: 500px) {
+      #media-grid { column-count: 1; }
+    }
+  </style>
+
+  <h2 style="text-align:center; margin-top:32px;">
+    그림그리드 미리보기<br>
+    <span style="font-size:16px;color:#555;">
+      (아래 기본폼을 복사해 붙여넣으세요)
+    </span>
+  </h2>
+  <div id="media-grid">
+    <!-- 아래처럼 이미지와 링크, 수정버튼 항상 포함! -->
+
+
+    <div class="grid-item">
+      <a href="https://naver.com" target="_blank" rel="noopener">
+        <img src="https://dimg.donga.com/a/390/390/95/1/ugc/CDB/WOMAN/Article/68/37/b9/2d/6837b92d1df6d2738e25.jpg" alt="" />
+      </a>
+      <button class="edit-btn">수정</button>
+    </div>
+
+
+    <div class="grid-item">
+      <a href="https://daum.net" target="_blank" rel="noopener">
+        <img src="https://dimg.donga.com/ugc/CDB/WOMAN/Article/68/24/5d/04/68245d041beca0a0a0a.jpg" alt="" />
+      </a>
+      <button class="edit-btn">수정</button>
+    </div>
+
+
+
+
+
+<div class="grid-item">
+  <a href="https://m.singleskorea.com/article/719953/THESINGLE" target="_blank" rel="noopener">
+    <img src="https://tbc.imgdl.xcache.kinxcdn.com/cdn001/20250528/967391387_USMEF_%E1%84%8B%E1%85%A9%E1%84%85%E1%85%A6%E1%86%AB%E1%84%8C%E1%85%B5%E1%84%86%E1%85%B5%E1%84%90%E1%85%B3%E1%84%87%E1%85%A9%E1%86%AF.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+
       <h2>여기에 화면 3의 HTML 코드를 넣으세요</h2>
       <img src="https://via.placeholder.com/240x120" alt="샘플이미지">
     </div>
+
+
+
+   
     <div id="screen-block-4" class="screen-block">
       <h2>여기에 화면 4의 HTML 코드를 넣으세요</h2>
       <iframe width="340" height="192" src="https://www.youtube.com/embed/O5H5KQGuQAs" frameborder="0" allowfullscreen></iframe>
